@@ -1,0 +1,507 @@
+{% extends 'base.html' %} {% block head %}
+<title>Skripsi</title>
+{% endblock %} {% block body %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarTogglerDemo03"
+    aria-controls="navbarTogglerDemo03"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="/">Skripsi</a>
+
+  <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Home</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/encrypt"
+          >Encrypt <span class="sr-only">(current)</span></a
+        >
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/decrypt">Decrypt</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container my-5">
+  <div class="row">
+    <div class="col-md-12 mb-3">
+      <input id="image" type="file" class="d-none" name="image" />
+      <div class="card">
+        <div class="card-body text-center">
+          <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+              <img class="img-preview d-none img-fluid" src="#" />
+            </div>
+          </div>
+          <i class="far fa-4x fa-image"></i>
+          <p id="filename"></p>
+          <label id="img-label" for="image" class="btn btn-primary"
+            >Pilih Gambar</label
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <input type="text" class="form-control" placeholder="Key" name="key" />
+    </div>
+    <div class="col-md-2">
+      <select class="form-control" name="sbox">
+        <option value="">Irreducible Polynomial</option>
+        <option value="S-BoxFix1">IP 1</option>
+        <option value="S-BoxFix2">IP 2</option>
+        <option value="S-BoxFix3">IP 3</option>
+      </select>
+      <input id="sbox" type="file" class="d-none" name="sbox-file" />
+      <label
+        id="sbox-label"
+        for="sbox"
+        class="btn btn-outline-primary btn-block"
+        >File SBOX</label
+      >
+    </div>
+    <div class="col-md-2">
+      <select class="form-control" name="size">
+        <option value="">Jenis AES</option>
+        <option value="128">AES-128</option>
+        <!--<option value="192">AES-192</option>
+              <option value="256">AES-256</option>-->
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select class="form-control" name="mode">
+        <option value="">Mode Operasi</option>
+        <option value="ecb">ECB</option>
+        <!--<option value="cbc">CBC</option>
+              <option value="ofb">OFB</option>
+              <option value="cfb">CFB</option>
+              <option value="ctr">CTR</option>-->
+      </select>
+    </div>
+    <div class="col-md-3">
+      <button id="btn-encrypt" class="btn btn-block btn-primary">
+        <b>Encrypt</b>
+      </button>
+    </div>
+
+    <div class="col-md-12 text-center my-3">
+      <p id="loader" style="display: none">Memproses Enkripsi...</p>
+    </div>
+  </div>
+
+  <div id="div-option" class="row mb-5" style="display: none">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <div class="btn-group" style="display: flex">
+        <button id="btn-show-modified" style="flex: 1" class="btn btn-primary">
+          Modified S-BOX
+        </button>
+        <button
+          id="btn-show-standard"
+          style="flex: 1"
+          class="btn btn-secondary"
+        >
+          Standard S-BOX
+        </button>
+      </div>
+    </div>
+    <div class="col-md-3"></div>
+    <div class="col-md-2"></div>
+  </div>
+
+  <div id="result1" class="row mb-5" style="display: none">
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th colspan="4" class="text-center">
+              Hasil Enkripsi AES Standard S-BOX
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Original Image</td>
+            <td colspan="2" class="text-center">Sensitivity Analysis</td>
+            <td>Encrypted Image</td>
+          </tr>
+          <tr>
+            <td rowspan="4">
+              <img id="original-img-1" src="#" class="img-fluid" />
+              <p>Entropy: <b id="entropy-original-1"></b></p>
+            </td>
+            <td class="text-center">Key Sensitivity</td>
+            <td class="text-center">Plaintext Sensitivity</td>
+            <td rowspan="4">
+              <img id="encrypted-img-1" src="#" class="img-fluid" />
+              <p>Entropy: <b id="entropy-1"></b></p>
+              <a
+                href="/download/ciphertext_original_aes.png"
+                class="btn btn-block btn-primary btn-sm"
+                >Download Gambar</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>NPCR: <span id="npcr-original-key"></span></td>
+            <td>NPCR: <span id="npcr-original-plaintext"></span></td>
+          </tr>
+          <tr>
+            <td>UACI: <span id="uaci-original-key"></span></td>
+            <td>UACI: <span id="uaci-original-plaintext"></span></td>
+          </tr>
+          <tr>
+            <td colspan="2" class="text-center">
+              Running Time: <span id="time-1"></span>s
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="text-center">Histogram</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <div
+                id="histogram-original-1"
+                style="width: 100%; overflow: auto"
+              ></div>
+            </td>
+            <td colspan="2">
+              <div id="histogram-1" style="width: 100%; overflow: auto"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-center">Grayscale</td>
+            <td class="text-center">Red</td>
+            <td class="text-center">Green</td>
+            <td class="text-center">Blue</td>
+          </tr>
+          <tr>
+            <td id="hist-diff-gray-1" class="text-center"></td>
+            <td id="hist-diff-red-1" class="text-center"></td>
+            <td id="hist-diff-green-1" class="text-center"></td>
+            <td id="hist-diff-blue-1" class="text-center"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="result2" class="row" style="display: none">
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th colspan="4" class="text-center">
+              Hasil Enkripsi AES Modified S-BOX
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Original Image</td>
+            <td colspan="2" class="text-center">Sensitivity Analysis</td>
+            <td>Encrypted Image</td>
+          </tr>
+          <tr>
+            <td rowspan="4">
+              <img id="original-img-2" src="#" class="img-fluid" />
+              <p>Entropy: <b id="entropy-original-2"></b></p>
+            </td>
+            <td class="text-center">Key Sensitivity</td>
+            <td class="text-center">Plaintext Sensitivity</td>
+            <td rowspan="4">
+              <img id="encrypted-img-2" src="#" class="img-fluid" />
+              <p>Entropy: <b id="entropy-2"></b></p>
+              <a
+                href="/download/ciphertext_modified_aes.png"
+                class="btn btn-block btn-primary btn-sm"
+                >Download Gambar</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>NPCR: <span id="npcr-modified-key"></span></td>
+            <td>NPCR: <span id="npcr-modified-plaintext"></span></td>
+          </tr>
+          <tr>
+            <td>UACI: <span id="uaci-modified-key"></span></td>
+            <td>UACI: <span id="uaci-modified-plaintext"></span></td>
+          </tr>
+          <tr>
+            <td colspan="2" class="text-center">
+              Running Time: <span id="time-2"></span>s
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="text-center">Histogram</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <div
+                id="histogram-original-2"
+                style="width: 100%; overflow: auto"
+              ></div>
+            </td>
+            <td colspan="2">
+              <div id="histogram-2" style="width: 100%; overflow: auto"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-center">Grayscale</td>
+            <td class="text-center">Red</td>
+            <td class="text-center">Green</td>
+            <td class="text-center">Blue</td>
+          </tr>
+          <tr>
+            <td id="hist-diff-gray-2" class="text-center"></td>
+            <td id="hist-diff-red-2" class="text-center"></td>
+            <td id="hist-diff-green-2" class="text-center"></td>
+            <td id="hist-diff-blue-2" class="text-center"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block script %}
+<script>
+  function loadEncryptedImage(data) {
+    $("#loader").hide();
+    $("#result2, #div-option").fadeIn();
+    $("#encrypted-img-2").attr(
+      "src",
+      "data:image/png;base64, " + data.ciphertext[0]
+    );
+    $("#encrypted-img-1").attr(
+      "src",
+      "data:image/png;base64, " + data.ciphertext[1]
+    );
+    $("#original-img-1, #original-img-2").attr(
+      "src",
+      "data:image/png;base64, " + data.plaintext
+    );
+
+    $("#entropy-1").text(parseFloat(data.entropy[1]).toFixed(4));
+    $("#entropy-2").text(parseFloat(data.entropy[0]).toFixed(4));
+    $("#entropy-original-1, #entropy-original-2").text(
+      parseFloat(data.entropy[2]).toFixed(4)
+    );
+
+    $("#npcr-original-key").text(parseFloat(data.npcr.original.key).toFixed(4));
+    $("#npcr-original-plaintext").text(
+      parseFloat(data.npcr.original.plaintext).toFixed(4)
+    );
+    $("#uaci-original-key").text(parseFloat(data.uaci.original.key).toFixed(4));
+    $("#uaci-original-plaintext").text(
+      parseFloat(data.uaci.original.plaintext).toFixed(4)
+    );
+    $("#npcr-modified-key").text(parseFloat(data.npcr.modified.key).toFixed(4));
+    $("#npcr-modified-plaintext").text(
+      parseFloat(data.npcr.modified.plaintext).toFixed(4)
+    );
+    $("#uaci-modified-key").text(parseFloat(data.uaci.modified.key).toFixed(4));
+    $("#uaci-modified-plaintext").text(
+      parseFloat(data.uaci.modified.plaintext).toFixed(4)
+    );
+
+    $("#time-1").text(parseFloat(data.runtime[1]).toFixed(2));
+    $("#time-2").text(parseFloat(data.runtime[0]).toFixed(2));
+
+    if (data.diff[0].length > 1) {
+      $("#hist-diff-gray-1, #hist-diff-gray-2").text("-");
+      $("#hist-diff-red-1").text(data.diff[1][0]);
+      $("#hist-diff-green-1").text(data.diff[1][1]);
+      $("#hist-diff-blue-1").text(data.diff[1][2]);
+      $("#hist-diff-red-2").text(data.diff[0][0]);
+      $("#hist-diff-green-2").text(data.diff[0][1]);
+      $("#hist-diff-blue-2").text(data.diff[0][2]);
+    } else {
+      $("#hist-diff-gray-1").text(data.diff[1][0]);
+      $("#hist-diff-gray-2").text(data.diff[0][0]);
+      $("#hist-diff-red-1, #hist-diff-red-2").text("-");
+      $("#hist-diff-green-1, #hist-diff-green-2").text("-");
+      $("#hist-diff-blue-1, #hist-diff-blue-2").text("-");
+    }
+
+    var color = ["rgb(255,0,0)", "rgb(0,0,255)", "rgb(0,255,0)"];
+    var names = ["Red", "Blue", "Green"];
+
+    var layout = {
+      autosize: false,
+      showlegend: false,
+      width: 500,
+      height: 250,
+      margin: {
+        l: 10,
+        r: 10,
+        b: 100,
+        t: 10,
+        pad: 2,
+      },
+    };
+
+    if (data.histogram[1].length == 256) {
+      names[0] = ["Grayscale"];
+    }
+
+    var data_plot1 = [];
+    var index = 0;
+    data.histogram[1].forEach((e) => {
+      data_plot1.push({
+        y: e,
+        type: "lines",
+        name: names[index],
+        line: {
+          color: color[index],
+        },
+      });
+
+      index++;
+    });
+
+    var data_plot2 = [];
+    var index = 0;
+    data.histogram[0].forEach((e) => {
+      data_plot2.push({
+        y: e,
+        type: "lines",
+        name: names[index],
+        line: {
+          color: color[index],
+        },
+      });
+
+      index++;
+    });
+
+    var data_plot3 = [];
+    var index = 0;
+    data.histogram[2].forEach((e) => {
+      data_plot3.push({
+        y: e,
+        type: "lines",
+        name: names[index],
+        line: {
+          color: color[index],
+        },
+      });
+
+      index++;
+    });
+
+    Plotly.newPlot("histogram-1", data_plot1, layout, {
+      displayModeBar: false,
+    });
+    Plotly.newPlot("histogram-2", data_plot2, layout, {
+      displayModeBar: false,
+    });
+    Plotly.newPlot("histogram-original-1", data_plot3, layout, {
+      displayModeBar: false,
+    });
+    Plotly.newPlot("histogram-original-2", data_plot3, layout, {
+      displayModeBar: false,
+    });
+  }
+
+  $(document).ready(function () {
+    $("#image").change(function () {
+      if (this.files && this.files[0]) {
+        var reader = new FileReader();
+        var filename = this.files[0].name;
+
+        reader.onload = function (e) {
+          //$(".img-preview").attr("src", e.target.result);
+          //$(".img-preview").removeClass("d-none");
+          //$(".fa-image").hide();
+          $("#filename").text(filename);
+        };
+        reader.readAsDataURL(this.files[0]);
+      }
+    });
+
+    $("#sbox").change(function () {
+      if (this.files && this.files[0]) {
+        $("#sbox-label").text("SBOX: " + this.files[0].name);
+      }
+    });
+
+    $("#btn-show-standard").click(function () {
+      $("#btn-show-modified")
+        .removeClass("btn-primary")
+        .addClass("btn-secondary");
+      $("#btn-show-standard")
+        .removeClass("btn-secondary")
+        .addClass("btn-primary");
+      $("#result1").fadeIn();
+      $("#result2").hide();
+    });
+
+    $("#btn-show-modified").click(function () {
+      $("#btn-show-standard")
+        .removeClass("btn-primary")
+        .addClass("btn-secondary");
+      $("#btn-show-modified")
+        .removeClass("btn-secondary")
+        .addClass("btn-primary");
+      $("#result2").fadeIn();
+      $("#result1").hide();
+    });
+
+    $("#btn-encrypt").click(function () {
+      var key = $("input[name=key]").val();
+      var size = $("select[name=size]").val();
+      var mode = $("select[name=mode]").val();
+      var sbox = $("select[name=sbox]").val();
+
+      if (!size) {
+        alert("Jenis AES belum dipilih");
+        return;
+      }
+
+      if (!mode) {
+        alert("Mode Operasi belum dipilih");
+        return;
+      }
+
+      var formData = new FormData();
+
+      formData.append("key", key);
+      formData.append("size", size);
+      formData.append("mode", mode);
+      formData.append("sbox", sbox);
+      formData.append("image", $("#image")[0].files[0]);
+      formData.append("sbox-file", $("#sbox")[0].files[0]);
+
+      $("#loader").fadeIn();
+      $("#result1, #result2, #div-option").hide();
+
+      $.ajax({
+        url: "/api/encrypt",
+        method: "post",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+          data = JSON.parse(data);
+          if (data.status == "ok") {
+            loadEncryptedImage(data);
+          } else {
+            alert(data.msg);
+          }
+        },
+      });
+    });
+  });
+</script>
+{% endblock %}

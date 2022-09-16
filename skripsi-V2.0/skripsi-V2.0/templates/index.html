@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Skripsi</title>
+{% endblock %}
+
+{% block body %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="/">Skripsi</a>
+  
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item active">
+          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/encrypt">Encrypt</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/decrypt">Decrypt</a>
+        </li>
+      </ul>      
+    </div>
+</nav>
+
+<div class="container">
+  <div class="jumbotron">
+      <h1 class="display-4">Adam Rizky Puguh Putra</h1>
+      <p class="lead">MODIFIKASI S-BOX MENGGUNAKAN PENGGANTIAN <i>IRREDUCIBLE POLYNOMIAL</i> PADA ALGORITMA AES UNTUK PENINGKATAN KEAMANAN CITRA DIGITAL</p>
+      <hr class="my-4">
+      <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-3">
+          <a href="/encrypt" class="btn btn-block btn-primary">Enkripsi</a>
+        </div>
+        <div class="col-md-3">
+          <a href="/decrypt" class="btn btn-block btn-secondary">Dekripsi</a>
+        </div>
+      </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
